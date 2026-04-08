@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: axionai-backend
+    runtime: node
+    rootDir: .
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+      - key: DISCORD_CLIENT_ID
+        sync: false
+      - key: DISCORD_CLIENT_SECRET
+        sync: false
+      - key: DISCORD_REDIRECT_URI
+        value: https://axionai-app.base44.app/auth/discord/callback
+      - key: DISCORD_BOT_TOKEN
+        sync: false
+      - key: FRONTEND_URL
+        value: https://axionai-app.base44.app
+    disk:
+      name: axionai-db
+      mountPath: /opt/render/project/src/db
+      sizeGB: 1
