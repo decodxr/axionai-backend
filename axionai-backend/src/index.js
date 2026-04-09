@@ -13,6 +13,7 @@ const statsRoutes = require('./routes/stats');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+app.set('trust proxy', 1);
 // ─── Security Middleware ────────────────────────────────────────────────────
 app.use(helmet());
 app.use(express.json());
