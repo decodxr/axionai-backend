@@ -2,7 +2,7 @@
 const express = require('express');
 const axios = require('axios');
 const { requireAuth } = require('../middleware/auth');
-const { getGuildConfig, updateGuildModule, getGuildStats } = require('../db');
+const { getGuildConfig, updateGuildModule, getGuildStats, addGuildEvent, getGuildEvents } = require('../db');
 
 const router = express.Router();
 
@@ -117,6 +117,32 @@ router.get('/:id/stats', requireAuth, (req, res) => {
   const { id } = req.params;
   const stats = getGuildStats(id);
   res.json(stats);
+});
+
+/**
+ * GET /guilds/:id/events?limit=100
+ * Returns event history for a guild.
+ */
+router.get('/:id/events', requireAuth, (req, res) => {
+  const { id } = req.params;
+  const limit = parseInt(req.query.limit) || 100;
+  const events = getGuildEvents(id, limit);
+  res.json(events);
+});
+
+/**
+ * POST /guilds/:id/events
+ * Body: { type, description, user? }
+ * Adds a new event to the guild log (called by the bot).
+ */
+router.post('/:id/events', (req, res) => {
+  const { id } = req.params;
+  const { type, description, user } = req.body;
+  if (!type || !description) {
+    return res.status(400).json({ error: 'Missing type or description' });
+  }
+  const event = addGuildEvent(id, { type, description, user });
+  res.status(201).json(event);
 });
 
 module.exports = router;
